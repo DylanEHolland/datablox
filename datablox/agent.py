@@ -118,6 +118,8 @@ class datablox_agent(object):
                         fetch_blocks = False
                         block = False
                         datablox_name = None
+                        details = None
+
                         if type(incoming) == str:
                             agent = incoming                    
                             if agent not in self.agent_list:
@@ -139,6 +141,9 @@ class datablox_agent(object):
                             if "fetch_blocks" in incoming:
                                 fetch_blocks = incoming.get("fetch_blocks")
 
+                            if "fetch_details" in incoming:
+                                details = True
+
                             if "block" in incoming:
                                 print("looking for block")
                                 block = incoming.get('block')
@@ -153,10 +158,14 @@ class datablox_agent(object):
                             blocks = datablox(str(fetch_blocks), db_directory = self.db_directory, agent = self).dump()
                             self.send(blocks, connection=connection)
                         
-                        print(block, datablox_name)
                         if block and datablox_name:
+                            print(block, datablox_name)
                             dbx = datablox(str(datablox_name), db_directory = self.db_directory, agent = self)
                             self.send(datablox_row(block, parent = dbx).to_dict(), connection=connection)
+
+                        if details and datablox_name:
+                            dbx = datablox(str(datablox_name), db_directory = self.db_directory, agent = self)
+                            self.send(dbx.to_dict(), connection=connection)
 
                         self.send("[Warning] nothing to do", connection=connection)
 
@@ -164,6 +173,7 @@ class datablox_agent(object):
                 print("Cleanly shutting down")
                 self.socket = None
                 break
+        self.socket = None
 
     def connect(self):
         if not self.socket:

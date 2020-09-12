@@ -15,26 +15,39 @@ class datablox_row(object):
 
     def __init__(self, *args, **kwargs):
         potential_hash = None
+        loaded = False
 
         if len(args):
             potential_hash = args[0]
         
         if len(kwargs) and not len(args):
-            potential_hash = kwargs.get('hash')
-
-        directory = ""
-        if len(kwargs):
-            parent = kwargs.get('parent'),
+            parent = kwargs.get('parent')
             value = kwargs.get('value')
-            if parent and len(parent) and parent[0]:
-                self.parent = parent[0]
-                self.directory = self.parent.directory() + "/blocks"
-                self.value = value
+            previous = kwargs.get('previous')
+            created_at = kwargs.get('created_at')
+            agent = kwargs.get('agent')
+            row_type = kwargs.get('type')
 
-        if potential_hash:
-            # Load existing
-            self.signature = potential_hash
-            self.load()
+            if parent and value and previous and created_at and agent and row_type:
+                print("Passed a foreign row!")
+                loaded = True
+            else:
+                potential_hash = kwargs.get('hash')
+
+        if not loaded:
+            directory = ""
+            if len(kwargs):
+                parent = kwargs.get('parent'),
+                value = kwargs.get('value')
+                if parent and len(parent) and parent[0]:
+                    self.parent = parent[0]
+                    self.directory = self.parent.directory() + "/blocks"
+                    self.value = value
+
+            if potential_hash:
+                # Load existing
+                self.signature = potential_hash
+                self.load()
 
     def __str__(self):
         return "<%s: %s>" % (
@@ -81,6 +94,9 @@ class datablox_row(object):
 
         return subs.hash_digest(hashable.encode())
     
+    def from_dict(self, **kwargs):
+        pass
+
     def load(self):
         filename = "%s/%s" % (self.directory, self.signature)
         data = subs.read_file(filename)

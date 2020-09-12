@@ -1,4 +1,4 @@
-from datablox import datablox, datablox_agent
+from datablox import datablox, datablox_agent, datablox_row
 
 def test_client():
     db_agent = datablox_agent("cli", db_directory = "/tmp/datablox_clone")
@@ -19,13 +19,29 @@ def test_agent_handshake():
 
 def test_fetch():
     db_agent = datablox_agent("cli", db_directory = "/tmp/datablox_clone")
+    details = db_agent.request({"datablox": "test_ledger", "fetch_details": True})
+    dbx = datablox("test_ledger",
+        agent = db_agent,
+        db_directory = "/tmp/datablox_clone", 
+        from_dict = details
+    )
+
+    dbx.commit()
+    print(dbx)
+
+def test_fetch_blocks():
+    db_agent = datablox_agent("cli", db_directory = "/tmp/datablox_clone")
+    #print(db_agent.request({"fetch_details": "test_ledger"}))
     blocks = db_agent.request({"fetch_blocks": "test_ledger"})
-    block = db_agent.request({"datablox": "test_ledger", "block": blocks[0]})
-    #block = db_agent.request({'datablox': 'test_ledger', 'block': '87caaccaa799d3f97019abac02039e32'})
-    print(block)
-    
+    block = blocks[-1]
+    # dbx = datablox("test_ledger", db_directory = "/tmp/datablox_clone", agent = db_agent)
+    while block != None:
+        block = db_agent.request({"datablox": "test_ledger", "block": block})
+        print("From peer:", block)
+        block = block['previous']
 
 if __name__ == "__main__":
     #test_client()
     #test_agent_handshake()
     test_fetch()
+    #test_fetch_blocks()

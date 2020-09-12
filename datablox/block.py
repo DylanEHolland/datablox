@@ -25,16 +25,26 @@ class datablox(object):
     def __init__(self, *args, **kwargs):
         name = None
         agent = None
+        loaded = False
 
         if len(kwargs):
             name = kwargs.get('name')
             row_type = kwargs.get('row_type')
             db_directory = kwargs.get('db_directory')
+            foreign_details = kwargs.get('from_dict')
+            
             if 'agent' in kwargs:
                 agent = kwargs.get('agent')
 
+            if db_directory:
+                self.db_directory = db_directory
+
             if name:
                 self.name = name
+
+            if foreign_details and type(foreign_details) == dict:
+                self.from_dict(foreign_details)
+                loaded = True
 
             if row_type:
                 if row_type in allowed_types:
@@ -114,6 +124,13 @@ class datablox(object):
 
     def dump(self):
         return self.hash_list
+
+    def from_dict(self, foreign_details):
+        self.created_at = subs.datetime_from_string(foreign_details.get('created_at'))
+        self.head = foreign_details.get('head')
+        self.tail = foreign_details.get('tail')
+        self.row_type = foreign_details.get('row_type')
+        self.signature = foreign_details.get('signature')
 
     def add(self, value):
         output = datablox_row(
