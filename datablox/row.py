@@ -11,6 +11,7 @@ class datablox_row(object):
     parent = None
     previous = None
     value = None
+    parent_signature = None
     signature = None
 
     def __init__(self, *args, **kwargs):
@@ -20,34 +21,24 @@ class datablox_row(object):
         if len(args):
             potential_hash = args[0]
         
-        if len(kwargs) and not len(args):
-            parent = kwargs.get('parent')
+        directory = ""    
+        if len(kwargs):
+            parent = kwargs.get('parent'),
             value = kwargs.get('value')
-            previous = kwargs.get('previous')
-            created_at = kwargs.get('created_at')
-            agent = kwargs.get('agent')
-            row_type = kwargs.get('type')
+            foreign_data = kwargs.get('from_dict')
+            if parent and len(parent) and parent[0]:
+                self.parent = parent[0]
+                self.directory = self.parent.directory() + "/blocks"
+                self.value = value
 
-            if parent and value and previous and created_at and agent and row_type:
-                print("Passed a foreign row!")
+            if foreign_data and type(foreign_data) == dict:
+                self.from_dict(foreign_data)
                 loaded = True
-            else:
-                potential_hash = kwargs.get('hash')
 
-        if not loaded:
-            directory = ""
-            if len(kwargs):
-                parent = kwargs.get('parent'),
-                value = kwargs.get('value')
-                if parent and len(parent) and parent[0]:
-                    self.parent = parent[0]
-                    self.directory = self.parent.directory() + "/blocks"
-                    self.value = value
-
-            if potential_hash:
-                # Load existing
-                self.signature = potential_hash
-                self.load()
+        if potential_hash:
+            # Load existing
+            self.signature = potential_hash
+            self.load()
 
     def __str__(self):
         return "<%s: %s>" % (
@@ -94,20 +85,21 @@ class datablox_row(object):
 
         return subs.hash_digest(hashable.encode())
     
-    def from_dict(self, **kwargs):
-        pass
+    def from_dict(self, foreign_data):
+        self.created_at = subs.datetime_from_string(foreign_data.get('created_at'))
+        self.previous = foreign_data.get('previous')
+        self.value = allowed_types[self.parent.row_type](foreign_data.get('value'))
+        self.parent_signature = foreign_data.get('parent_signature')
 
     def load(self):
         filename = "%s/%s" % (self.directory, self.signature)
         data = subs.read_file(filename)
         if data:
             data = json.loads(data)
-            self.type = data['type']
             self.value = allowed_types[self.parent.row_type](data['value'])
             self.previous = data['previous']
             self.created_at = subs.datetime_from_string(data['created_at'])
-            self.agent = data['agent']
-
+            self.parent_signature = data['parent_signature']
             if self.digest() != self.signature:
                 raise Exception("Uhh... Block Signature/Digest mismatch")
             else:
@@ -119,5 +111,5 @@ class datablox_row(object):
             'type': self.parent.row_type,
             'previous': self.previous,
             'created_at': str(self.created_at),
-            'agent': self.parent.agent.signature
+            'parent_signature': self.parent.signature
         }

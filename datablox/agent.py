@@ -196,6 +196,7 @@ class datablox_agent(object):
         else:
             if "Error" in buffer:
                 print("Something went wrong:", buffer)
+        
                 
     def request(self, data):
         self.connect()

@@ -29,8 +29,6 @@ def test_create_datablox():
 def test_load_datablox():
     db_agent = datablox_agent("dylan", db_directory = "/tmp/datablox")
     dbx = datablox("test_ledger", db_directory = "/tmp/datablox", agent = db_agent)
-    new_row = dbx.add(f(1001))
-    new_row.commit()
     for row in dbx:
         print(row.value)
 

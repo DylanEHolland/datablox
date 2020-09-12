@@ -22,6 +22,9 @@ class datablox(object):
     index = None
     hash_list = None
     
+    def __del__(self):
+        self.socket = None
+
     def __init__(self, *args, **kwargs):
         name = None
         agent = None
@@ -129,8 +132,8 @@ class datablox(object):
         self.created_at = subs.datetime_from_string(foreign_details.get('created_at'))
         self.head = foreign_details.get('head')
         self.tail = foreign_details.get('tail')
-        self.row_type = foreign_details.get('row_type')
         self.signature = foreign_details.get('signature')
+        self.row_type = foreign_details.get('row_type')
 
     def add(self, value):
         output = datablox_row(

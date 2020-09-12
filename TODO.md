@@ -1,0 +1,23 @@
+# TODO
+
+## v0.1
+
+*   Create typed hash chain [100%]
+
+*   Create agent classes associated with IP and hostname [100%]
+
+*   Create client/server model to allow agents to discover one another [100%]
+
+*   Use client/server to pull hash chain metadata [100%]
+
+*   Use client/server to pull block list and individual blocks [100%]
+
+*   Allow building and verification of local blocks in memory from server data [100%]
+
+*   Allow building and verification of hash chain in memory from server data [100%]
+
+*   Add pushing of agent data upon discovery [50%]
+
+*   Allow iterating through chain over network [80%]
+
+## v0.2 Rewrite
