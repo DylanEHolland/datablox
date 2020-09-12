@@ -17,15 +17,15 @@ def test_agent_handshake():
     db_agent = datablox_agent("cli", db_directory = "/tmp/datablox_clone")
     db_agent.initiate()
 
-def test_clone():
+def test_fetch():
     db_agent = datablox_agent("cli", db_directory = "/tmp/datablox_clone")
-    db_agent.commit()
-    db_agent.connect()
-
-    data = {
-        "clone": ["test_ledger"]
-    }
+    blocks = db_agent.request({"fetch_blocks": "test_ledger"})
+    block = db_agent.request({"datablox": "test_ledger", "block": blocks[0]})
+    #block = db_agent.request({'datablox': 'test_ledger', 'block': '87caaccaa799d3f97019abac02039e32'})
+    print(block)
+    
 
 if __name__ == "__main__":
     #test_client()
-    test_agent_handshake()
+    #test_agent_handshake()
+    test_fetch()

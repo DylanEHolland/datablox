@@ -3,11 +3,13 @@ import os
 import requests
 from datetime import datetime
 import json
-from .hoarder import hoarder
+from .block import datablox
+from .row import datablox_row
 
 class datablox_agent(object):
     agent_list = None
     created_at = None
+    connected = False
     db_directory = None
     filename = None
     committed = None
@@ -26,6 +28,7 @@ class datablox_agent(object):
             if 'db_directory' in kwargs:
                 self.db_directory = kwargs.get('db_directory')
 
+        self.connected = False
         self.hostname = subs.socket.gethostname()
         self.local_address = subs.socket.gethostbyname(self.hostname)
         self.public_address = requests.get('https://checkip.amazonaws.com').text.strip()
@@ -112,6 +115,9 @@ class datablox_agent(object):
                         self.send("Test callback", connection=connection)
                     else:
                         agent = None                        
+                        fetch_blocks = False
+                        block = False
+                        datablox_name = None
                         if type(incoming) == str:
                             agent = incoming                    
                             if agent not in self.agent_list:
@@ -122,14 +128,36 @@ class datablox_agent(object):
                             
                                 self.send("Success", connection = connection)
                         elif type(incoming) == dict:
+                            print("Is dict")
                             if "agent" in incoming:
                                 agent = incoming.get("agent")
+                            
+                            if "datablox" in incoming:
+                                print("got datablox name")
+                                datablox_name = incoming.get("datablox")
+
+                            if "fetch_blocks" in incoming:
+                                fetch_blocks = incoming.get("fetch_blocks")
+
+                            if "block" in incoming:
+                                print("looking for block")
+                                block = incoming.get('block')
 
                         if not agent:
                             self.send("[Error] Agent required without test attr", connection=connection)
 
                         if agent not in self.agent_list:
                             self.send("[Error] Agent unknown. Initiate before making requests.", connection=connection)
+                        
+                        if fetch_blocks:
+                            blocks = datablox(str(fetch_blocks), db_directory = self.db_directory, agent = self).dump()
+                            self.send(blocks, connection=connection)
+                        
+                        print(block, datablox_name)
+                        if block and datablox_name:
+                            dbx = datablox(str(datablox_name), db_directory = self.db_directory, agent = self)
+                            self.send(datablox_row(block, parent = dbx).to_dict(), connection=connection)
+
                         self.send("[Warning] nothing to do", connection=connection)
 
             except KeyboardInterrupt as err:
@@ -138,6 +166,9 @@ class datablox_agent(object):
                 break
 
     def connect(self):
+        if not self.socket:
+            self.socket = subs.create_socket()
+
         self.socket.connect((self.local_address, 11001))
 
     def initiate(self):
@@ -150,12 +181,20 @@ class datablox_agent(object):
         server_connection = self.send(self.signature)
         buffer = self.receive(server_connection)
         if type(buffer) == list:
-            print(buffer)
+            self.agent_list += buffer
+            self.commit()
         else:
             if "Error" in buffer:
                 print("Something went wrong:", buffer)
                 
-        
+    def request(self, data):
+        self.connect()
+        data['agent'] = self.signature
+
+        con = self.send(data)
+        buffer = self.receive(con)
+        self.socket = None
+        return buffer
 
     def receive(self, connection):
         char = None

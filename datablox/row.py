@@ -5,7 +5,7 @@ from datetime import datetime
 import json
 
 class datablox_row(object):
-    comitted = None
+    committed = None
     created_at = None
     directory = None
     parent = None
@@ -49,7 +49,10 @@ class datablox_row(object):
         object.__setattr__(self, key, value)
 
 
-    def commit(self):        
+    def commit(self):  
+        if self.committed:
+            return None
+
         if not self.previous:
             self.previous = self.parent.tail
 

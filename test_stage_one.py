@@ -18,11 +18,10 @@ def test_create_datablox():
     )
     dbx.commit()
     
-    for n in range(1000):
+    for n in range(10):
         new_row = dbx.add(f(n))
         new_row.commit()
         print(new_row)
-
     dbx.commit()
     print(dbx)
     print(dbx.hash_list)

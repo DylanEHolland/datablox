@@ -113,7 +113,7 @@ class datablox(object):
         return "%s/%s" % (self.db_directory, self.name)
 
     def dump(self):
-        buffer
+        return self.hash_list
 
     def add(self, value):
         output = datablox_row(
@@ -142,8 +142,8 @@ class datablox(object):
                 self.signature = self.digest()
 
             self.committed = True
-            subs.write_file(info_file, json.dumps(self.to_dict()))
 
+        subs.write_file(info_file, json.dumps(self.to_dict()))
         write_hashlist = False
         if os.path.isfile(hashlist_file):
             old_hashlist = json.loads(subs.read_file(hashlist_file))
