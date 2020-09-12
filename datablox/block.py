@@ -149,10 +149,7 @@ class datablox(object):
             if not os.path.exists(blockdir):
                 subs.mkdir_recursively(blockdir)
 
-            if os.path.exists(info_file):
-                # already exists
-                pass
-            else:
+            if not self.created_at:
                 self.created_at = datetime.now()
             
             if not self.signature:
@@ -183,8 +180,6 @@ class datablox(object):
         hashlist_filename = "%s/%s" % (self.directory(), "list.json")
         hashlist = subs.read_file(hashlist_filename)
         hashlist = json.loads(hashlist)
-        
-        print(details)
 
         self.created_at = subs.datetime_from_string(details['created_at'])
         self.head = details['head']

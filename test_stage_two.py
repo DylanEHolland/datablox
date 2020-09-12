@@ -34,14 +34,16 @@ def test_fetch_blocks():
     #print(db_agent.request({"fetch_details": "test_ledger"}))
     blocks = db_agent.request({"fetch_blocks": "test_ledger"})
     block = blocks[-1]
-    # dbx = datablox("test_ledger", db_directory = "/tmp/datablox_clone", agent = db_agent)
+    dbx = datablox("test_ledger", db_directory = "/tmp/datablox_clone", agent = db_agent)
+    print(dbx)
     while block != None:
         block = db_agent.request({"datablox": "test_ledger", "block": block})
         print("From peer:", block)
+        test_block = dict(block)
         block = block['previous']
 
 if __name__ == "__main__":
-    #test_client()
-    #test_agent_handshake()
-    test_fetch()
-    #test_fetch_blocks()
+    # test_client()
+    # test_agent_handshake()
+    #test_fetch()
+    test_fetch_blocks()
