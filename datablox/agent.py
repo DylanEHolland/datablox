@@ -8,15 +8,14 @@ from .row import datablox_row
 
 class datablox_agent(object):
     agent_list = None
+    committed = None
     created_at = None
-    connected = False
     db_directory = None
     filename = None
-    committed = None
-    local_address = None
-    public_address = None
     hostname = None
+    local_address = None
     name = None
+    public_address = None
     signature = None
     socket = None
 
@@ -28,7 +27,6 @@ class datablox_agent(object):
             if 'db_directory' in kwargs:
                 self.db_directory = kwargs.get('db_directory')
 
-        self.connected = False
         self.hostname = subs.socket.gethostname()
         self.local_address = subs.socket.gethostbyname(self.hostname)
         self.public_address = requests.get('https://checkip.amazonaws.com').text.strip()
@@ -196,7 +194,7 @@ class datablox_agent(object):
         else:
             if "Error" in buffer:
                 print("Something went wrong:", buffer)
-        
+        self.socket = None
                 
     def request(self, data):
         self.connect()
@@ -251,3 +249,24 @@ class datablox_agent(object):
             'hostname': self.hostname,
             'signature': self.digest()
         }
+
+class foreign_agent:
+    keys = ['name', 'created_at', 'public_address', 'hostname']
+    
+    created_at = None
+    hostname = None
+    name = None
+    public_address = None
+    signature = None
+
+    def __init__(self, *args, **kwargs):
+        arguments = subs.extract_args(*args, **kwargs)
+        if arguments.get('hash'):
+            self.signature = arguments.get('hash')
+
+        if 'from_dict' in arguments['arguments']:
+            self.load(arguments['arguments'].get('from_dict'))
+
+    def load(self, data):
+        for attr in data:
+            print(attr in self.keys)

@@ -18,6 +18,6 @@
 
 *   Add pushing of agent data upon discovery [50%]
 
-*   Allow iterating through chain over network [80%]
+*   Allow committing of data to foreign chain [0%]
 
-## v0.2 Rewrite
+*   Rewrite hash chain iterability to utilize both local and peer blocks [0%]

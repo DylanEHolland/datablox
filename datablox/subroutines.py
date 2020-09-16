@@ -3,6 +3,31 @@ import socket
 import hashlib
 from datetime import datetime
 
+def extract_args(*args, **kwargs):
+    output = {
+        'hash': None,
+        'parent': None,
+        'arguments': {}
+    }
+
+    if len(args):
+        if type(args[0]) == str:
+            output['hash'] = args[0]
+
+    if len(kwargs):
+        data = dict(kwargs)
+        if 'digest' in data:
+            output['hash'] = data.get('digest')
+            del(data['digest'])
+
+        if 'parent' in data:
+            output['parent'] = data.get('parent')
+            del(data['parent'])
+        
+        output['arguments'] = data
+
+    return output
+
 def create_socket():
     return socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

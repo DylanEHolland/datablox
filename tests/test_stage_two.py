@@ -15,6 +15,7 @@ def test_client():
 
 def test_agent_handshake():
     db_agent = datablox_agent("cli", db_directory = "/tmp/datablox_clone")
+    db_agent.commit()
     db_agent.initiate()
 
 def test_fetch():
@@ -40,14 +41,11 @@ def test_fetch_blocks():
     while block != None:
         block = db_agent.request({"datablox": "test_ledger", "block": block})
         row = datablox_row(from_dict = block, parent = dbx)
-        print(row.parent_signature)
-        #print("From peer:", block)
-        break
         test_block = dict(block)
         block = block['previous']
 
 if __name__ == "__main__":
-    test_client()
+    #test_client()
     test_agent_handshake()
     test_fetch()
     test_fetch_blocks()
