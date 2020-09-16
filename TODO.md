@@ -16,6 +16,8 @@
 
 *   Allow building and verification of hash chain in memory from server data [100%]
 
+*   Create networking module to abstract most of datablox_agent (and remove the random connection resets) [0%]
+
 *   Add pushing of agent data upon discovery [50%]
 
 *   Allow committing of data to foreign chain [0%]
