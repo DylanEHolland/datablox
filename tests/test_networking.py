@@ -3,10 +3,20 @@ from argparse import ArgumentParser
 
 def test_create_connection():
     con = networking.connection("0.0.0.0", 11201)
-    print(con)
+    con.connect()
+    con.send({"test": "message"})
+
 
 def test_server():
-    pass
+    con = networking.connection("0.0.0.0", 11201)
+    con.bind()
+
+    while True:
+        try:
+            incoming = con.receive()
+            print(incoming["test"])
+        except KeyboardInterrupt as err:
+            con = None
 
 if __name__ == "__main__":
     ap = ArgumentParser()

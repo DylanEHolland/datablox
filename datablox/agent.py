@@ -61,6 +61,7 @@ class datablox_agent(object):
             
             subs.write_file(self.filename, json.dumps(self.to_dict()))
             self.agent_list.append(self.signature)
+        
         subs.write_file(self.db_directory + "/agents.json", json.dumps(self.agent_list))
         self.committed = True
 
@@ -171,6 +172,7 @@ class datablox_agent(object):
                 print("Cleanly shutting down")
                 self.socket = None
                 break
+            
         self.socket = None
 
     def connect(self):
