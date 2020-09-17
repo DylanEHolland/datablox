@@ -30,7 +30,6 @@ class connection:
     def __del__(self):
         self.socket.close()
         self.socket = None
-        print("Ha")
 
     def __init__(self, address, port):
         self.address = address
@@ -42,7 +41,9 @@ class connection:
         self.socket.listen(5)
 
     def connect(self):
-        self.socket.connect( (self.address, self.port) )
+        self.socket.connect( 
+            (self.address, self.port)
+        )
 
     def send(self, data):
         pkt = data_packet(**data)
@@ -52,7 +53,6 @@ class connection:
     def receive(self):
         tfr = transfer(self)
         return tfr.pull()
-
 
 class transfer:
     def __init__(self, connection, packet = None):

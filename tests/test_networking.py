@@ -1,11 +1,15 @@
-from datablox import networking
 from argparse import ArgumentParser
+from datablox import networking
+import random
 
 def test_create_connection():
     con = networking.connection("0.0.0.0", 11201)
     con.connect()
-    con.send({"test": "message"})
+    data = {}
+    for k in range(random.randint(10, 1000)):
+        data[str(k)] = "test"
 
+    con.send(data)
 
 def test_server():
     con = networking.connection("0.0.0.0", 11201)
@@ -14,7 +18,7 @@ def test_server():
     while True:
         try:
             incoming = con.receive()
-            print(incoming["test"])
+            print(len(incoming.keys()))
         except KeyboardInterrupt as err:
             con = None
 
