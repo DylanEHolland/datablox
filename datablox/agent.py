@@ -6,6 +6,9 @@ import json
 from .block import datablox
 from .row import datablox_row
 
+class agent:
+    pass
+
 class datablox_agent(object):
     agent_list = None
     committed = None
@@ -172,7 +175,7 @@ class datablox_agent(object):
                 print("Cleanly shutting down")
                 self.socket = None
                 break
-            
+
         self.socket = None
 
     def connect(self):

@@ -38,7 +38,7 @@ class connection:
 
     def bind(self):
         self.socket.bind( (self.address, self.port) )
-        self.socket.listen(5)
+        self.socket.listen(1)
 
     def connect(self):
         self.socket.connect( 
@@ -62,6 +62,7 @@ class transfer:
             self.packet = packet
 
     def push(self):
+        # TODO: This should be it's own class
         for char in self.packet.header():
             self.connection.socket.send(bytes(char.encode('utf-8')))
 
@@ -71,6 +72,8 @@ class transfer:
         )
 
     def pull(self):
+        # TODO: This should be it's own class
+
         incoming_connection, incoming_address = self.connection.socket.accept()
 
         char = None
@@ -89,4 +92,3 @@ class transfer:
             return incoming_packet.to_dict()
         else:
             raise Exception("Packet mismatch")
-        
