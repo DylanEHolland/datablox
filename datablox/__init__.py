@@ -5,6 +5,5 @@ allowed_types = {
     "boolean": bool
 }
 
-from .agent import datablox_agent
-from .row import datablox_row
-from .block import datablox
+import datablox.base as base
+from datablox.base import Block
