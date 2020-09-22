@@ -34,11 +34,21 @@ def create_socket():
 def mkdir_recursively(dirname):
     dirs = dirname.split("/")
     new_directory = ""
+    built = False
     for directory in dirs:
         if len(directory) > 0:
             new_directory += "/%s" % directory
             if not os.path.exists(new_directory):
-                os.mkdir(new_directory)
+                try:
+                    os.mkdir(new_directory)
+                    built = True
+                except PermissionError as err:
+                    print(err)
+                    return False
+
+    if built:
+        return True
+    return None
 
 def read_file(filename):
     buffer = False

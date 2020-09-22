@@ -5,3 +5,6 @@ all:
 
 test:
 	PYTHONPATH=$(PYPATH) python3 tests/test_block.py;
+
+clean:
+	rm -rfv datablox/*.pyc datablox/__pycache__;

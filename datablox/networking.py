@@ -3,7 +3,6 @@ import json
 
 class data_packet:
     data = None
-    signature = None
 
     def __init__(self, **kwargs):
         if 'data' not in kwargs:
